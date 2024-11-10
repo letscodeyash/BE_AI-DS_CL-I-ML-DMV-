@@ -1,1 +1,38 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 
+
+# Load the Iris dataset
+df = pd.read_csv("./datasets/iris.csv")
+
+
+# Select features (attributes) for clustering (e.g., sepal_length, sepal_width, petal_length, petal_width)
+X = df.iloc[:, 1:-1]  # Exclude the first column (id) and the last column (species)
+
+# Standardize the feature matrix (important for K-Means)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+
+# Determine the optimal number of clusters using the elbow method
+inertia = []
+for k in range(1, 11):
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(X_scaled)
+    inertia.append(kmeans.inertia_)
+
+print(inertia)
+
+
+# Plot the elbow curve
+plt.figure(figsize=(8, 6))
+plt.plot(range(1, 11), inertia, marker='o', linestyle='--')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Inertia (Within-cluster Sum of Squares)')
+plt.title('Elbow Method for Optimal Number of Clusters')
+plt.grid()
+plt.show()
